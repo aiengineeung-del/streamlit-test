@@ -1,5 +1,7 @@
 import streamlit as st
-import anthropic
+from openai import OpenAI
+
+MODEL = "gpt-4o-mini"  # 사용 가능한 모델명으로 바꾸실 수 있습니다
 
 st.set_page_config(page_title="자기소개서 생성기", page_icon="✍️")
 st.title("✍️ 자기소개서 생성기")
@@ -16,6 +18,8 @@ tone = st.radio("문체", ["격식체", "담백한 문체"], horizontal=True)
 if st.button("자소서 생성"):
     if not (company and job and experience):
         st.warning("회사, 직무, 경험을 모두 입력해 주세요.")
+    elif "OPENAI_API_KEY" not in st.secrets:
+        st.error("API 키가 등록되지 않았습니다. 앱 Settings → Secrets를 확인해 주세요.")
     else:
         prompt = f"""다음 정보로 자기소개서 한 문항을 작성해 주세요.
 - 지원 회사: {company}
@@ -26,12 +30,11 @@ if st.button("자소서 생성"):
 - 지원자의 경험·강점: {experience}
 
 규칙: 위에 적힌 경험만 사용하고, 없는 사실이나 수치는 지어내지 마세요."""
-        client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         with st.spinner("작성 중입니다..."):
-            msg = client.messages.create(
-                model="claude-sonnet-5-5",
-                max_tokens=2000,
+            resp = client.chat.completions.create(
+                model=MODEL,
                 messages=[{"role": "user", "content": prompt}],
             )
         st.subheader("초안")
-        st.write(msg.content[0].text)
+        st.write(resp.choices[0].message.content)
