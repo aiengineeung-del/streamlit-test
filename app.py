@@ -3,7 +3,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load dotenv()
+load_dotenv()
 MODEL = "gpt-4o-mini"  # 사용 가능한 모델명으로 바꾸실 수 있습니다
 
 def get_api_key():
@@ -44,14 +44,14 @@ if submitted:
 - 지원자의 경험·강점: {experience}
 
 규칙: 위에 적힌 경험만 사용하고, 없는 사실이나 수치는 지어내지 마세요."""
-      try:
-            client = OpenAI(api_key=get_api_key())
-            with st.spinner("작성 중입니다..."):
-                resp = client.chat.completions.create(
-                    model=MODEL,
-                    messages=[{"role": "user", "content": prompt}],
-                )
-            st.subheader("초안")
-            st.write(resp.choices[0].message.content)
-        except Exception as e:
-            st.error(f"요청 중 오류가 발생했습니다: {type(e).__name__}")
+try:
+    client = OpenAI(api_key=get_api_key())
+    with st.spinner("작성 중입니다..."):
+        resp = client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    st.subheader("초안")
+    st.write(resp.choices[0].message.content)
+except Exception as e:
+    st.error(f"요청 중 오류가 발생했습니다: {type(e).__name__}")
