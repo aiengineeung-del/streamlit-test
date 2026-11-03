@@ -1,9 +1,8 @@
 import os
 import streamlit as st
-from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
+openai_key = st.secrets["OPENAI_API_KEY"]
 MODEL = "gpt-4o-mini"  # 사용 가능한 모델명으로 바꾸실 수 있습니다
 
 def get_api_key():
@@ -45,7 +44,7 @@ if submitted:
 
 규칙: 위에 적힌 경험만 사용하고, 없는 사실이나 수치는 지어내지 마세요."""
 try:
-    client = OpenAI(api_key=get_api_key())
+    client = OpenAI(api_key=openai_key)
     with st.spinner("작성 중입니다..."):
         resp = client.chat.completions.create(
             model=MODEL,
